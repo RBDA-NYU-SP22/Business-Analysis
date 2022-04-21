@@ -1,5 +1,6 @@
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/StateBusinessCountReducer.java
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/StateBusinessCountMapper.java
+/Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/ReviewCategoryMapper.java
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/UniqueCheckReducer.java
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/BusinessFilterReducer.java
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/BusinessAnalysis.java
@@ -11,3 +12,4 @@
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/BusinessCountReducer.java
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/AttributeReducer.java
 /Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/CategoryStatisticReducer.java
+/Users/tantianyi/Documents/NYU 2022 Spring/RBDA/Project/rbda/src/main/java/com/nyu/rbda/ReviewCategoryReducer.java
