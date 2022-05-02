@@ -31,7 +31,7 @@ public class ReviewCategoryReducer extends Reducer<IntWritable, IntWritable, Tex
         for(Entry<Integer, Integer> entry: treeMap.entrySet()) {
             int key = entry.getKey();
             String text = "Review count between "+((key-1)*50)+" and "+(key*50);
-            context.write(new Text(text), new IntWritable(key));
+            context.write(new Text(text), new IntWritable(entry.getValue()));
         }
     }
 }

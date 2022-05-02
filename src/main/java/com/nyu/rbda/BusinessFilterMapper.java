@@ -25,10 +25,10 @@ public class BusinessFilterMapper extends Mapper<LongWritable, Text, NullWritabl
         String keyName = "categories";
         String splitter = ", ";
         String[] categories = jsonObject.get(keyName).toString().split(splitter);
-        boolean whetherRestaurant = true;
+        boolean whetherRestaurant = false;
         for(int i=0; i<categories.length; i++) {
-            if(!filterCategorySet.contains(categories[i])) {
-                whetherRestaurant = false;
+            if(filterCategorySet.contains(categories[i])) {
+                whetherRestaurant = true;
                 break;
             }
         }

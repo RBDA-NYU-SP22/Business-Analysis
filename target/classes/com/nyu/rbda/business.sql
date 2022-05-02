@@ -1,5 +1,5 @@
  use tt2370;
- create table if not exists filtered_business_data(json string);
+ create external table if not exists filtered_business_data(json string);
  load data inpath 'hdfs://horton.hpc.nyu.edu:8020/user/tt2370/project/filtered_data/filtered_business_data.json' overwrite into table filtered_business_data;
  select * from filtered_business_data limit 100;
 
