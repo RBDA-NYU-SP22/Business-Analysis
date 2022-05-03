@@ -4,8 +4,11 @@ import java.util.Arrays;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -15,7 +18,8 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class BusinessAnalysis {
-    public static String[] analysis_name = new String[]{"stateCount", "businessCount", "uniqueCheck", "attributeStatistic", "categoryStatistic", "filterBusiness", "reviewCountCategory", "businessStarRank", "businessReviewFilter"};
+    public static String[] analysis_name = new String[]{"stateCount", "businessCount", "uniqueCheck", "attributeStatistic", "categoryStatistic", "filterBusiness", "reviewCountCategory", "businessStarRank", "reviewTokenizer", "businessReviewFilter", "businessReviewStarsRank", "filterBusinessWithReview"};
+
     public static int findAnalysisIndex(String target) {
         for(int i=0; i<analysis_name.length; i++) {
             if(analysis_name[i].equals(target)) {
@@ -119,12 +123,58 @@ public class BusinessAnalysis {
             job.setOutputKeyClass(NullWritable.class);
             job.setOutputValueClass(Text.class);
             System.exit(job.waitForCompletion(true)?0:1);
-        }  else if(analysisIndex==8){
+        }  else if(analysisIndex==8) {
+            job.setJobName("Review Tokenize");
+            job.setMapperClass(ReviewTokenizerMapper.class);
+            job.setNumReduceTasks(0);
+            job.setOutputKeyClass(Text.class);
+            job.setOutputValueClass(MapWritable.class);
+            System.exit(job.waitForCompletion(true)?0:1);
+        }  else if(analysisIndex==9){
             job.setJobName("Business Review Filter");
             FileOutputFormat.setOutputPath(job, new Path(args[2]));
             MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, ReviewFilterMapper.class);
             MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, BusinessReviewFilterMapper.class);
             job.setReducerClass(BusinessReviewReducer.class);
+            job.setMapOutputKeyClass(Text.class);
+            job.setMapOutputValueClass(Text.class);
+            job.setOutputKeyClass(NullWritable.class);
+            job.setOutputValueClass(Text.class);
+            System.exit(job.waitForCompletion(true)?0:1);
+        }  else if(analysisIndex==10) {
+            job.setJobName("Business Review Stars Rank");
+            FileOutputFormat.setOutputPath(job, new Path(args[2]));
+            MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, ReviewFilterMapper.class);
+            MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, BusinessReviewFilterMapper.class);
+            job.setReducerClass(BusinessReviewStarsReducer.class);
+            job.setMapOutputKeyClass(Text.class);
+            job.setMapOutputValueClass(Text.class);
+            job.setOutputKeyClass(NullWritable.class);
+            job.setOutputValueClass(Text.class);
+            System.exit(job.waitForCompletion(true)?0:1);
+        }   else if(analysisIndex==11) {
+            job.setJobName("Filter Business With Review");
+            FileOutputFormat.setOutputPath(job, new Path(args[2]));
+            MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, ReviewFilterMapper.class);
+            MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, BusinessReviewFilterMapper.class);
+            job.setReducerClass(FilterBusinessWithReviewReducer.class);
+            job.setMapOutputKeyClass(Text.class);
+            job.setMapOutputValueClass(Text.class);
+            job.setOutputKeyClass(NullWritable.class);
+            job.setOutputValueClass(Text.class);
+            System.exit(job.waitForCompletion(true)?0:1);
+        }  else if(analysisIndex==12) {
+            FileSystem fs = FileSystem.get(conf);
+            RemoteIterator<LocatedFileStatus> fileStatusListIterator = fs.listFiles(new Path(args[0]), false);
+            while(fileStatusListIterator.hasNext()) {
+                LocatedFileStatus locatedFileStatus = fileStatusListIterator.next();
+                String name = locatedFileStatus.getPath().getName();
+                if(name.contains("part-m-")) {
+                    MultipleInputs.addInputPath(job, locatedFileStatus.getPath(), TextInputFormat.class, UserReviewMapper.class);
+                }
+            }
+            MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, ReviewUserMapper.class);
+            job.setReducerClass(ReviewUserReducer.class);
             job.setMapOutputKeyClass(Text.class);
             job.setMapOutputValueClass(Text.class);
             job.setOutputKeyClass(NullWritable.class);

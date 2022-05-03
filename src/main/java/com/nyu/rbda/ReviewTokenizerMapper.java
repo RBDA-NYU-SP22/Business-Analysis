@@ -33,18 +33,14 @@ public class ReviewTokenizerMapper extends Mapper<LongWritable, Text, Text, MapW
                 }
                 businessID = jsonObject.get("business_id").toString();
                 reviewID = jsonObject.get("review_id").toString();
-            }
-    @Override
-    protected void cleanup(Mapper<LongWritable, Text, Text, MapWritable>.Context context)
-            throws IOException, InterruptedException {
-        MapWritable mapWritable = new MapWritable();
-        for(Entry<String, Integer> entry: map.entrySet()) {
-            String word = entry.getKey();
-            int num = entry.getValue();
-            mapWritable.put(new Text(word), new IntWritable(num));
-        } 
-        context.write(new Text(reviewID+" "+businessID), mapWritable);
+            MapWritable mapWritable = new MapWritable();
         
-    }
+            for(Entry<String, Integer> entry: map.entrySet()) {
+                String word = entry.getKey();
+                int num = entry.getValue();
+                mapWritable.put(new Text(word), new IntWritable(num));
+            } 
+            context.write(new Text(reviewID+" "+businessID), mapWritable);
+            }
     
 }
