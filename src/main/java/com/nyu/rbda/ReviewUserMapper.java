@@ -12,7 +12,7 @@ public class ReviewUserMapper extends Mapper<LongWritable, Text, Text, Text>{
     protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, Text>.Context context)
             throws IOException, InterruptedException {
         JSONObject review = new JSONObject(value.toString());
-        String review_id = review.getString("review_id");
+        String review_id = review.getString("user_id");
         context.write(new Text(review_id), new Text("R "+value.toString()));
         
     }

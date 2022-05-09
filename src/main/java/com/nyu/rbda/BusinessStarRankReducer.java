@@ -11,7 +11,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class BusinessStarRankReducer extends Reducer<Text, Text, NullWritable, Text>{
-    HashMap<String, PriorityQueue<Entry<Double, String>>> stateMap;
+    HashMap<String, PriorityQueue<String>> stateMap;
     @Override
     protected void setup(Reducer<Text, Text, NullWritable, Text>.Context context)
             throws IOException, InterruptedException {
@@ -26,11 +26,11 @@ public class BusinessStarRankReducer extends Reducer<Text, Text, NullWritable, T
             double stars = Double.parseDouble(s[0]);
             String name = s[1];
             if(!stateMap.containsKey(key.toString())) {
-                stateMap.put(state, new PriorityQueue<Entry<Double, String>>((e1, e2)->e1.getKey()-e2.getKey()<0?-1:1));
+                stateMap.put(state, new PriorityQueue<String>((e1, e2)->Double.parseDouble(e1.split("|")[0])-Double.parseDouble(e2.split("|")[0])<0?-1:1));
             }
-            PriorityQueue<Entry<Double, String>> priorityQueue = stateMap.get(state);
+            PriorityQueue<String> priorityQueue = stateMap.get(state);
             
-            priorityQueue.add(Map.entry(stars, name));
+            priorityQueue.add(stars+"|"+name);
             if(priorityQueue.size()>10) {
                 priorityQueue.poll();
             }
@@ -40,12 +40,13 @@ public class BusinessStarRankReducer extends Reducer<Text, Text, NullWritable, T
     @Override
     protected void cleanup(Reducer<Text, Text, NullWritable, Text>.Context context)
             throws IOException, InterruptedException {
-        for(Entry<String, PriorityQueue<Entry<Double, String>>> entry: stateMap.entrySet()) {
-            PriorityQueue<Entry<Double, String>> priorityQueue = entry.getValue();
+        for(Entry<String, PriorityQueue<String>> entry: stateMap.entrySet()) {
+            PriorityQueue<String> priorityQueue = entry.getValue();
             String state = entry.getKey();
-            for(Entry<Double, String> entry2: priorityQueue) {
-                double stars = entry2.getKey();
-                String name = entry2.getValue();
+            for(String entry2: priorityQueue) {
+                String[] arr = entry2.split("|");
+                double stars = Double.parseDouble(arr[0]);
+                String name = arr[1];
                 context.write(NullWritable.get(), new Text(state+" "+name+" "+stars));
             }
         }

@@ -15,13 +15,13 @@ public class ReviewUserReducer extends Reducer<Text, Text, NullWritable, Text>{
         double rate = 0.0;
         for(Text val: values) {
             if(val.toString().startsWith("A")) {
-                rate = Double.parseDouble(val.toString());
+                rate = Double.parseDouble(val.toString().substring(2));
                 break;
             }
         }
         for(Text val: values) {
             if(val.toString().startsWith("R")) {
-                JSONObject review = new JSONObject(val.toString());
+                JSONObject review = new JSONObject(val.toString().substring(2));
                 double stars = review.getDouble("stars");
                 review.remove("stars");
                 review.put("stars", stars*rate);

@@ -18,7 +18,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class BusinessAnalysis {
-    public static String[] analysis_name = new String[]{"stateCount", "businessCount", "uniqueCheck", "attributeStatistic", "categoryStatistic", "filterBusiness", "reviewCountCategory", "businessStarRank", "reviewTokenizer", "businessReviewFilter", "businessReviewStarsRank", "filterBusinessWithReview"};
+    public static String[] analysis_name = new String[]{"stateCount", "businessCount", "uniqueCheck", "attributeStatistic", "categoryStatistic", "filterBusiness", "reviewCountCategory", "businessStarRank", "reviewTokenizer", "businessReviewFilter", "businessReviewStarsRank", "filterBusinessWithReview", "userReviewAdjusted"};
 
     public static int findAnalysisIndex(String target) {
         for(int i=0; i<analysis_name.length; i++) {
@@ -164,6 +164,7 @@ public class BusinessAnalysis {
             job.setOutputValueClass(Text.class);
             System.exit(job.waitForCompletion(true)?0:1);
         }  else if(analysisIndex==12) {
+            job.setJobName("User Review Rate Adjusted");
             FileSystem fs = FileSystem.get(conf);
             RemoteIterator<LocatedFileStatus> fileStatusListIterator = fs.listFiles(new Path(args[0]), false);
             while(fileStatusListIterator.hasNext()) {
